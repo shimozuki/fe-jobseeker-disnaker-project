@@ -4,7 +4,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Search,
   MapPin,
@@ -25,6 +25,7 @@ import {
   Flame,
   RotateCcw,
 } from "lucide-react";
+import Breadcrumbs from "@/shared/components/Breadcrumbs";
 
 // Tipe Data Perusahaan
 interface Company {
@@ -43,8 +44,9 @@ interface Company {
   website: string;
 }
 
-// Mock Data Perusahaan
+// Mock Data Perusahaan (Dikomentari sesuai permintaan)
 const mockCompanies: Company[] = [
+  /*
   {
     id: "COMP-001",
     name: "PT Technology Innovation Sumbawa",
@@ -140,6 +142,7 @@ const mockCompanies: Company[] = [
     description: "Perusahaan holding media digital dan teknologi rintisan.",
     website: "https://nusantaradigital.com",
   },
+  */
 ];
 
 // Quick Filters URLs Presets
@@ -177,14 +180,27 @@ const quickUrlFilters = [
 ];
 
 export default function DaftarPerusahaanPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Ambil Parameter URL
-  const filterParam = searchParams.get("filter");
-  const kategoriParam = searchParams.get("kategori");
-  const verifikasiParam = searchParams.get("verifikasi");
-  const skalaParam = searchParams.get("skala");
+  // State Parameter URL menggunakan window.location.search
+  const [filterParam, setFilterParam] = useState<string | null>(null);
+  const [kategoriParam, setKategoriParam] = useState<string | null>(null);
+  const [verifikasiParam, setVerifikasiParam] = useState<string | null>(null);
+  const [skalaParam, setSkalaParam] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const filter = params.get("filter");
+    const kategori = params.get("kategori");
+    const verifikasi = params.get("verifikasi");
+    const skala = params.get("skala");
+
+    setFilterParam(filter);
+    setKategoriParam(kategori);
+    setVerifikasiParam(verifikasi);
+    setSkalaParam(skala);
+  }, []);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [locationQuery, setLocationQuery] = useState("");
@@ -332,18 +348,7 @@ export default function DaftarPerusahaanPage() {
       <div className="bg-white border-b border-slate-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-3.5 sm:px-5 lg:px-7 py-8 space-y-6">
           <div className="space-y-1.5 text-center sm:text-left">
-            <nav className="flex items-center gap-1.5 text-[13px] text-slate-500 justify-center sm:justify-start">
-              <Link
-                href="/dashboard"
-                className="hover:text-amber-700 transition-colors"
-              >
-                Dashboard
-              </Link>
-              <ChevronRight className="w-3 h-3 text-slate-400" />
-              <span className="font-semibold text-slate-800">
-                Direktori Perusahaan
-              </span>
-            </nav>
+            <Breadcrumbs></Breadcrumbs>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
               Direktori{" "}
               <span className="text-amber-700">Perusahaan & Instansi</span>{" "}
@@ -573,7 +578,7 @@ export default function DaftarPerusahaanPage() {
               </div>
             </div>
 
-            {/* COMPANY GRID */}
+            {/* COMPANY GRID / UI HANDLER KETIKA DATA KOSONG */}
             {filteredCompanies.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {filteredCompanies.map((comp) => (
@@ -652,26 +657,37 @@ export default function DaftarPerusahaanPage() {
                 ))}
               </div>
             ) : (
-              /* EMPTY STATE */
-              <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center space-y-3 shadow-sm">
-                <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
-                  <Building2 className="w-8 h-8" />
+              /* EMPTY STATE / UI HANDLER KETIKA DATA KOSONG */
+              <div className="bg-white rounded-2xl border border-slate-100 p-12 sm:p-16 text-center space-y-4 shadow-sm">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
+                  <Building2 className="w-8 h-8 sm:w-10 sm:h-10" />
                 </div>
-                <div className="max-w-xs mx-auto space-y-1">
-                  <h3 className="text-base font-bold text-slate-900">
-                    Perusahaan Tidak Ditemukan
+                <div className="max-w-md mx-auto space-y-1">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                    {mockCompanies.length === 0
+                      ? "Belum Ada Perusahaan Terdaftar"
+                      : "Perusahaan Tidak Ditemukan"}
                   </h3>
-                  <p className="text-[11px] text-slate-500">
-                    Tidak ada perusahaan yang cocok dengan pencarian atau
-                    kriteria filter yang Anda terapkan.
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    {mockCompanies.length === 0
+                      ? "Saat ini belum ada direktori perusahaan atau instansi yang terdaftar di sistem. Silakan periksa kembali nanti."
+                      : "Tidak ada perusahaan atau instansi yang cocok dengan kriteria kata kunci pencarian atau filter URL yang Anda pilih saat ini."}
                   </p>
                 </div>
-                <button
-                  onClick={() => router.push("/perusahaan")}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-lg transition-all"
-                >
-                  Lihat Semua Perusahaan
-                </button>
+
+                <div className="pt-2">
+                  <button
+                    onClick={() => {
+                      setSearchQuery("");
+                      setLocationQuery("");
+                      router.push("/perusahaan");
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-black text-white text-xs font-bold rounded-xl shadow-md transition-all"
+                  >
+                    <span>Lihat Semua Perusahaan</span>
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             )}
 

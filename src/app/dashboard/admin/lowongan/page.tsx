@@ -18,6 +18,7 @@ import {
   MoreVertical,
   X,
   FileCheck2,
+  RotateCcw,
 } from "lucide-react";
 
 // Types
@@ -35,8 +36,9 @@ interface JobItem {
   recruitmentStage: "Pendaftaran" | "Seleksi Berkas" | "Wawancara" | "Selesai";
 }
 
-// Dummy Data Lowongan
+// Dummy Data Lowongan (Dikomentari sesuai permintaan)
 const MOCK_JOBS: JobItem[] = [
+  /*
   {
     id: "JOB-001",
     title: "Frontend Web Developer",
@@ -115,6 +117,7 @@ const MOCK_JOBS: JobItem[] = [
     status: "Ditolak",
     recruitmentStage: "Pendaftaran",
   },
+  */
 ];
 
 export default function AllJobsPage() {
@@ -524,13 +527,42 @@ export default function AllJobsPage() {
                   </tr>
                 ))
               ) : (
+                /* EMPTY STATE / UI HANDLER KETIKA DATA KOSONG */
                 <tr>
-                  <td
-                    colSpan={7}
-                    className="py-8 text-center text-slate-400 text-xs"
-                  >
-                    Tidak ada lowongan pekerjaan yang sesuai dengan kriteria
-                    filter.
+                  <td colSpan={7} className="py-12 text-center">
+                    <div className="max-w-sm mx-auto space-y-3">
+                      <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
+                        <Briefcase className="w-6 h-6" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-xs font-bold text-slate-800">
+                          {MOCK_JOBS.length === 0
+                            ? "Belum Ada Data Lowongan"
+                            : "Lowongan Tidak Ditemukan"}
+                        </h3>
+                        <p className="text-[0.7rem] text-slate-500 leading-relaxed">
+                          {MOCK_JOBS.length === 0
+                            ? "Saat ini belum ada lowongan pekerjaan yang terdaftar di dalam sistem administratif."
+                            : "Tidak ada lowongan pekerjaan yang sesuai dengan kriteria filter atau pencarian Anda."}
+                        </p>
+                      </div>
+                      {(searchQuery ||
+                        selectedStatus !== "Semua" ||
+                        selectedCompany !== "Semua" ||
+                        selectedCategory !== "Semua" ||
+                        selectedLocation !== "Semua" ||
+                        selectedType !== "Semua" ||
+                        startDate ||
+                        endDate) && (
+                        <button
+                          onClick={resetFilters}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[0.7rem] font-bold rounded-lg transition-colors"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          <span>Reset Filter</span>
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               )}

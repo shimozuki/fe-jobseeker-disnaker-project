@@ -649,17 +649,13 @@ export default function CandidateEditProfilePage() {
                 Anda.
               </p>
             </div>
-            {/* <button
-              disabled={hasNoExperience}
+            <button
               onClick={() => setIsExperienceModalOpen(true)}
-              className={`px-4 py-2 text-white font-bold text-xs rounded-xl transition-colors inline-flex items-center gap-1.5 shrink-0 ${
-                hasNoExperience
-                  ? "bg-slate-300 cursor-not-allowed"
-                  : "bg-app-navy-600 hover:bg-app-navy-700"
-              }`}
+              className={`px-4 py-2 text-white font-bold text-xs rounded-xl transition-colors inline-flex items-center gap-1.5 shrink-0
+              bg-app-navy-600 hover:bg-app-navy-700`}
             >
               <Plus className="w-4 h-4" /> Tambah Pengalaman
-            </button> */}
+            </button>
           </div>
 
           {/* OPSI BELUM MEMILIKI PENGALAMAN */}
@@ -668,7 +664,7 @@ export default function CandidateEditProfilePage() {
               <input
                 type="checkbox"
                 id="noExp"
-                checked={user?.profile.is_fresh_graduate}
+                checked={user?.profile?.is_fresh_graduate}
                 onChange={(e) => handleToggleFreshGraduateStatus()}
                 className="w-4 h-4 text-app-navy-600 rounded border-amber-300 focus:ring-app-navy-500"
               />

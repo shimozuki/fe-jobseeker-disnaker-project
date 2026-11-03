@@ -4,7 +4,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Search,
   MapPin,
@@ -27,7 +27,9 @@ import {
   Flame,
   RotateCcw,
   Bookmark,
+  BriefcaseBusiness,
 } from "lucide-react";
+import Breadcrumbs from "@/shared/components/Breadcrumbs";
 
 // Tipe Data Lowongan
 interface JobVacancy {
@@ -49,8 +51,9 @@ interface JobVacancy {
   isBumn?: boolean; // Penanda BUMN / Instansi
 }
 
-// Mock Data Lowongan
+// Mock Data Lowongan (Dikomentari sesuai permintaan)
 const mockJobs: JobVacancy[] = [
+  /*
   {
     id: "JOB-001",
     title: "Senior Frontend Developer (React / Next.js)",
@@ -182,6 +185,7 @@ const mockJobs: JobVacancy[] = [
     publishedDate: "2026-09-23",
     deadline: "2026-11-01",
   },
+  */
 ];
 
 // Opsi Quick Navigation Tabs Sesuai Spesifikasi URL
@@ -231,13 +235,24 @@ const quickUrlFilters = [
 ];
 
 export default function DaftarLowonganPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Ambil Parameter URL
-  const filterParam = searchParams.get("filter");
-  const tipeParam = searchParams.get("tipe");
-  const kategoriParam = searchParams.get("kategori");
+  // State Parameter URL menggunakan window.location.search
+  const [filterParam, setFilterParam] = useState<string | null>(null);
+  const [tipeParam, setTipeParam] = useState<string | null>(null);
+  const [kategoriParam, setKategoriParam] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const filter = params.get("filter");
+    const tipe = params.get("tipe");
+    const kategori = params.get("kategori");
+
+    setFilterParam(filter);
+    setTipeParam(tipe);
+    setKategoriParam(kategori);
+  }, []);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Terbaru");
@@ -366,18 +381,7 @@ export default function DaftarLowonganPage() {
       <div className="bg-white border-b border-slate-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
           <div className="space-y-2 text-center sm:text-left">
-            <nav className="flex items-center gap-2 text-[13px] text-slate-500 justify-center sm:justify-start">
-              <Link
-                href="/dashboard"
-                className="hover:text-app-navy-700 transition-colors"
-              >
-                Dashboard
-              </Link>
-              <ChevronRight className="w-3 h-3 text-slate-400" />
-              <span className="font-semibold text-slate-800">
-                Cari Lowongan
-              </span>
-            </nav>
+            <Breadcrumbs />
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
               Temukan <span className="text-app-navy-700">Karier Impian</span>{" "}
               Anda di Sumbawa
@@ -431,7 +435,9 @@ export default function DaftarLowonganPage() {
                     }`}
                   >
                     <IconComponent
-                      className={`w-3.5 h-3.5 ${active ? "text-amber-300" : "text-slate-400"}`}
+                      className={`w-3.5 h-3.5 ${
+                        active ? "text-amber-300" : "text-slate-400"
+                      }`}
                     />
                     <span>{tab.title}</span>
                     {tab.badge && (
@@ -569,7 +575,7 @@ export default function DaftarLowonganPage() {
               </div>
             </div>
 
-            {/* JOB GRID */}
+            {/* JOB GRID / UI HANDLER KETIKA DATA KOSONG */}
             {filteredJobs.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {filteredJobs.map((job) => (
@@ -648,7 +654,11 @@ export default function DaftarLowonganPage() {
                         <div className="flex items-center gap-1.5">
                           <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
                           <p
-                            className={`text-[11px] ${job.salaryDisplay ? "font-extrabold text-slate-900" : "font-semibold text-slate-400 italic"}`}
+                            className={`text-[11px] ${
+                              job.salaryDisplay
+                                ? "font-extrabold text-slate-900"
+                                : "font-semibold text-slate-400 italic"
+                            }`}
                           >
                             {job.salaryDisplay
                               ? job.salaryRange
@@ -684,26 +694,36 @@ export default function DaftarLowonganPage() {
                 ))}
               </div>
             ) : (
-              /* EMPTY STATE */
-              <div className="bg-white rounded-3xl border border-slate-100 p-12 text-center space-y-3.5 shadow-sm">
-                <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
-                  <Briefcase className="w-8 h-8" />
+              /* EMPTY STATE / UI HANDLER KETIKA DATA KOSONG */
+              <div className="bg-white rounded-3xl border border-slate-100 p-12 sm:p-16 text-center space-y-4 shadow-sm">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
+                  <BriefcaseBusiness className="w-8 h-8 sm:w-10 sm:h-10" />
                 </div>
                 <div className="max-w-md mx-auto space-y-1">
-                  <h3 className="text-base font-bold text-slate-900">
-                    Lowongan Tidak Ditemukan
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                    {mockJobs.length === 0
+                      ? "Belum Ada Lowongan Pekerjaan"
+                      : "Lowongan Tidak Ditemukan"}
                   </h3>
-                  <p className="text-[11px] text-slate-500">
-                    Tidak ada lowongan yang sesuai dengan kriteria filter URL
-                    yang Anda pilih.
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    {mockJobs.length === 0
+                      ? "Saat ini belum ada data lowongan pekerjaan yang tersedia di portal. Silakan periksa kembali secara berkala atau jelajahi kategori lainnya."
+                      : "Tidak ada lowongan pekerjaan yang sesuai dengan kriteria kata kunci pencarian atau filter URL yang Anda pilih saat ini."}
                   </p>
                 </div>
-                <button
-                  onClick={() => router.push("/lowongan-kerja")}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-xl transition-all"
-                >
-                  Lihat Semua Lowongan
-                </button>
+
+                <div className="pt-2">
+                  <button
+                    onClick={() => {
+                      setSearchQuery("");
+                      router.push("/lowongan-kerja");
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-black text-white text-xs font-bold rounded-xl shadow-md transition-all"
+                  >
+                    <span>Lihat Semua Lowongan</span>
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             )}
 
@@ -731,11 +751,6 @@ export default function DaftarLowonganPage() {
           </main>
         </div>
       </div>
-
-      <footer className="mt-14 bg-slate-100 border-t border-slate-200 py-5 text-center text-[9.5px] text-slate-500 px-4">
-        © {new Date().getFullYear()} Sumbawa Karir - Portal Lowongan Kerja
-        Terpadu Wilayah Sumbawa. All rights reserved.
-      </footer>
     </div>
   );
 }

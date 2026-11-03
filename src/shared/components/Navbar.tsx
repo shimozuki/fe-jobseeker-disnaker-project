@@ -274,9 +274,9 @@ export default function Navbar() {
 
             {/* Perusahaan */}
             <Link
-              href="/perusahaan"
+              href="/perusahaan-list"
               className={`px-4 py-2 text-xs font-semibold rounded-full transition-all duration-300 relative ${
-                pathname === "/perusahaan"
+                pathname === "/perusahaan-list"
                   ? "text-slate-900"
                   : "text-slate-600 hover:text-slate-900"
               }`}

@@ -21,6 +21,7 @@ import {
   CheckCircle2,
   CalendarDays,
   Sparkles,
+  CalendarOff,
 } from "lucide-react";
 
 // Tipe Data Event Ketenagakerjaan
@@ -41,8 +42,9 @@ interface CareerEvent {
   description: string;
 }
 
-// Mock Data Agenda Ketenagakerjaan
+// Mock Data Agenda Ketenagakerjaan (Dikomentari sesuai permintaan)
 const mockEvents: CareerEvent[] = [
+  /*
   {
     id: "EVT-001",
     slug: "job-fair-sumbawa-2026",
@@ -128,6 +130,7 @@ const mockEvents: CareerEvent[] = [
     description:
       "Pembekalan wawasan standar K3 dan kualifikasi teknis yang dibutuhkan industri tambang modern.",
   },
+  */
 ];
 
 // Preset Filter
@@ -416,7 +419,7 @@ export default function InformasiKarirPage() {
               </p>
             </div>
 
-            {/* EVENT CARDS LIST */}
+            {/* EVENT CARDS LIST / UI HANDLER KETIKA DATA KOSONG */}
             {filteredEvents.length > 0 ? (
               <div className="space-y-4">
                 {filteredEvents.map((evt) => (
@@ -507,26 +510,33 @@ export default function InformasiKarirPage() {
                 ))}
               </div>
             ) : (
-              /* EMPTY STATE */
-              <div className="bg-white rounded-3xl border border-slate-100 p-12 text-center space-y-3.5 shadow-sm">
-                <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
-                  <CalendarDays className="w-8 h-8" />
+              /* EMPTY STATE / UI HANDLER KETIKA DATA KOSONG */
+              <div className="bg-white rounded-3xl border border-slate-100 p-12 sm:p-16 text-center space-y-4 shadow-sm">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
+                  <CalendarOff className="w-8 h-8 sm:w-10 sm:h-10" />
                 </div>
                 <div className="max-w-md mx-auto space-y-1">
-                  <h3 className="text-base font-bold text-slate-900">
-                    Agenda Tidak Ditemukan
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                    {mockEvents.length === 0
+                      ? "Belum Ada Agenda Ketenagakerjaan"
+                      : "Agenda Tidak Ditemukan"}
                   </h3>
-                  <p className="text-[11px] text-slate-500">
-                    Tidak ada kegiatan ketenagakerjaan yang sesuai dengan
-                    pencarian atau filter yang Anda terapkan.
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    {mockEvents.length === 0
+                      ? "Saat ini belum ada jadwal agenda pelatihan, job fair, atau seminar yang dipublikasikan. Silakan periksa kembali di lain waktu."
+                      : "Tidak ada agenda kegiatan ketenagakerjaan yang cocok dengan kriteria kata kunci pencarian atau filter yang Anda terapkan saat ini."}
                   </p>
                 </div>
-                <button
-                  onClick={handleResetFilters}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-xl transition-all"
-                >
-                  Tampilkan Semua Kegiatan
-                </button>
+
+                <div className="pt-2">
+                  <button
+                    onClick={handleResetFilters}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-black text-white text-xs font-bold rounded-xl shadow-md transition-all"
+                  >
+                    <span>Tampilkan Semua Kegiatan</span>
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             )}
           </main>

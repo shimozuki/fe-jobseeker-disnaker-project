@@ -208,9 +208,8 @@ export default function AdminPelamarPage() {
               </p>
               <h3 className="text-lg font-bold text-emerald-600 mt-0.5">
                 {
-                  adminJobSeeker.filter(
-                    (a) => a.account_status?.toLowerCase() === "aktif",
-                  ).length
+                  adminJobSeeker.filter((a) => a.account_status === "active")
+                    .length
                 }{" "}
                 Akun
               </h3>

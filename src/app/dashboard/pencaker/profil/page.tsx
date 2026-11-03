@@ -506,7 +506,7 @@ export default function CandidateProfilePage() {
                               key={idx}
                               className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-semibold rounded-md"
                             >
-                              {sys === "onsite"
+                              {sys === "on_site"
                                 ? "On-site"
                                 : sys === "hybrid"
                                   ? "Hybrid"

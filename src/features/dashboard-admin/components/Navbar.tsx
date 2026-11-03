@@ -22,6 +22,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuthUser } from "@/shared/contexts/SessionContext";
 import { accountTypeMap } from "@/shared/utils/userAccountTypeMap";
 import { usePathname } from "next/navigation";
+import { logout } from "@/features/auth/services/auth.service";
+import { useLocalStorage } from "@/shared/hooks/useLocalStorage";
+import { useToast } from "@/shared/contexts/ToastContext";
 
 interface NavbarProps {
   onToggleMobileSidebar?: () => void;
@@ -34,10 +37,23 @@ export default function NavbarDashboardAdmin({
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const { user } = useAuthUser();
+  const [token] = useLocalStorage("access-token", null);
+  const { addToast } = useToast();
 
   const hide = ["/dashboard/admin/peta"].some((route) =>
     pathname.includes(route),
   );
+
+  const handleLogout = async () => {
+    if (!token) return;
+    const result = await logout(token);
+    if (result.status !== 200) {
+      addToast("Gagal logout", "error");
+      return;
+    }
+
+    window.location.href = "/login";
+  };
 
   if (hide) return null;
   return (
@@ -248,7 +264,7 @@ export default function NavbarDashboardAdmin({
                 <button
                   onClick={() => {
                     setIsProfileOpen(false);
-                    console.log("Logout diklik dari navbar Disnakertrans");
+                    handleLogout();
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors"
                 >

@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Building2,
   Sparkles,
+  RotateCcw,
 } from "lucide-react";
 
 interface Job {
@@ -32,19 +33,7 @@ interface Job {
 }
 
 const mockJobs: Job[] = [
-  // {
-  //   id: "1",
-  //   title: "Senior Mine Operations Engineer",
-  //   company: "PT Amman Mineral Nusa Tenggara",
-  //   companyLogo: "/images/companies/amman.png",
-  //   isVerified: true,
-  //   location: "Maluk / Sumbawa Barat",
-  //   type: "Full-time",
-  //   education: "S1 Teknik Pertambangan",
-  //   salary: "Rp 15.000.000 - Rp 25.000.000",
-  //   publishedAt: "2 jam yang lalu",
-  //   deadline: "15 Okt 2026",
-  // },
+  /*
   {
     id: "1",
     title: "Senior Mine Operations Engineer",
@@ -123,6 +112,7 @@ const mockJobs: Job[] = [
     publishedAt: "4 hari yang lalu",
     deadline: "01 Okt 2026",
   },
+  */
 ];
 
 export default function LatestJobsSection() {
@@ -180,150 +170,167 @@ export default function LatestJobsSection() {
           </Link>
         </div>
 
-        {/* Jobs Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {mockJobs.map((job) => {
-            const isSaved = savedJobs[job.id] || false;
+        {/* Jobs Grid / UI Handler Data Kosong */}
+        {mockJobs.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {mockJobs.map((job) => {
+              const isSaved = savedJobs[job.id] || false;
 
-            return (
-              <div
-                key={job.id}
-                className="group relative flex flex-col justify-between rounded-2xl bg-white p-5 border border-slate-200/90 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-400/60 hover:shadow-md"
-              >
-                <div>
-                  {/* Card Header: Company Logo with Verified Badge & Save Button */}
-                  <div className="flex items-start justify-between gap-3 mb-3.5">
-                    <div className="flex items-center gap-3 min-w-0">
-                      {/* Logo Container dengan Badge Verifikasi di Pojok */}
-                      <div className="relative shrink-0">
-                        <div className="relative h-11 w-11 rounded-xl bg-slate-100 border border-slate-200/80 flex items-center justify-center overflow-hidden">
-                          {job.companyLogo ? (
-                            <Image
-                              src={job.companyLogo}
-                              alt={job.company}
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <Building2 className="h-5 w-5 text-slate-400" />
-                          )}
-                        </div>
-
-                        {/* Badge Centang Verifikasi Terintegrasi di Logo */}
-                        {/* {job.isVerified && (
-                          <div
-                            title="Perusahaan Terverifikasi"
-                            className="absolute -top-1 -right-1 bg-teal-600 text-white p-0.5 rounded-full ring-2 ring-white shadow-sm"
-                          >
-                            <ShieldCheck className="h-3 w-3" />
+              return (
+                <div
+                  key={job.id}
+                  className="group relative flex flex-col justify-between rounded-2xl bg-white p-5 border border-slate-200/90 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-400/60 hover:shadow-md"
+                >
+                  <div>
+                    {/* Card Header: Company Logo with Verified Badge & Save Button */}
+                    <div className="flex items-start justify-between gap-3 mb-3.5">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="relative shrink-0">
+                          <div className="relative h-11 w-11 rounded-xl bg-slate-100 border border-slate-200/80 flex items-center justify-center overflow-hidden">
+                            {job.companyLogo ? (
+                              <Image
+                                src={job.companyLogo}
+                                alt={job.company}
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <Building2 className="h-5 w-5 text-slate-400" />
+                            )}
                           </div>
-                        )} */}
+                        </div>
+
+                        {/* Company Name & Location */}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1">
+                            <span className="text-[11px] font-semibold text-slate-700 truncate">
+                              {job.company}
+                            </span>
+                            {job.isVerified && (
+                              <ShieldCheck className="h-4.5 w-4.5 text-white fill-teal-500 shrink-0" />
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-0.5">
+                            <MapPin className="h-3 w-3 shrink-0 text-slate-400" />
+                            <span className="truncate">{job.location}</span>
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Company Name & Location */}
-                      <div className="min-w-0 flex-1">
+                      {/* Bookmark / Save Button */}
+                      <button
+                        type="button"
+                        onClick={() => toggleSaveJob(job.id)}
+                        className={`p-2 rounded-xl border transition-all shrink-0 ${
+                          isSaved
+                            ? "bg-amber-50 border-amber-200 text-amber-600"
+                            : "bg-slate-50 border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                        }`}
+                        aria-label="Simpan Lowongan"
+                      >
+                        <Bookmark
+                          className={`h-4 w-4 ${isSaved ? "fill-amber-500" : ""}`}
+                        />
+                      </button>
+                    </div>
+
+                    {/* Job Title */}
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-teal-700 transition-colors line-clamp-2 leading-snug">
+                      <Link href={`/lowongan-kerja/${job.id}`}>
+                        {job.title}
+                      </Link>
+                    </h3>
+
+                    {/* Tags: Type & Education */}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-3">
+                      <span
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${getTypeBadgeColor(
+                          job.type,
+                        )}`}
+                      >
+                        {job.type}
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-600">
+                        <GraduationCap className="h-3 w-3 text-slate-400" />
+                        {job.education}
+                      </span>
+                    </div>
+
+                    {/* Salary & Meta Info */}
+                    <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-[10px]">
+                      <div className="flex items-center gap-1.5 font-semibold text-slate-800">
+                        <Banknote className="h-3.5 w-3.5 text-teal-600 shrink-0" />
+                        <span>{job.salary || "Gaji Tidak Ditampilkan"}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between text-slate-400 pt-1">
                         <div className="flex items-center gap-1">
-                          <span className="text-[11px] font-semibold text-slate-700 truncate">
-                            {job.company}
-                          </span>
-                          {job.isVerified && (
-                            <ShieldCheck
-                              className="h-4.5 w-4.5 text-white fill-teal-500 shrink-0"
-                              // title="Perusahaan Terverifikasi Disnakertrans"
-                            />
-                          )}
+                          <Clock className="h-3 w-3 shrink-0" />
+                          <span>{job.publishedAt}</span>
                         </div>
-
-                        {/* Location */}
-                        <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-0.5">
-                          <MapPin className="h-3 w-3 shrink-0 text-slate-400" />
-                          <span className="truncate">{job.location}</span>
+                        <div className="flex items-center gap-1 text-amber-700 font-medium">
+                          <CalendarX className="h-3 w-3 shrink-0 text-amber-600" />
+                          <span>Batas: {job.deadline}</span>
                         </div>
                       </div>
                     </div>
-
-                    {/* Bookmark / Save Button */}
-                    <button
-                      type="button"
-                      onClick={() => toggleSaveJob(job.id)}
-                      className={`p-2 rounded-xl border transition-all shrink-0 ${
-                        isSaved
-                          ? "bg-amber-50 border-amber-200 text-amber-600"
-                          : "bg-slate-50 border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
-                      }`}
-                      aria-label="Simpan Lowongan"
-                    >
-                      <Bookmark
-                        className={`h-4 w-4 ${isSaved ? "fill-amber-500" : ""}`}
-                      />
-                    </button>
                   </div>
 
-                  {/* Job Title */}
-                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-teal-700 transition-colors line-clamp-2 leading-snug">
-                    <Link href={`/lowongan-kerja/${job.id}`}>{job.title}</Link>
-                  </h3>
-
-                  {/* Tags: Type & Education */}
-                  <div className="flex flex-wrap items-center gap-1.5 mt-3">
-                    <span
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${getTypeBadgeColor(
-                        job.type,
-                      )}`}
+                  {/* Action CTA Button */}
+                  <div className="mt-5 pt-3 border-t border-slate-100">
+                    <Link
+                      href={`/lowongan-kerja/${job.id}`}
+                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 hover:bg-teal-700 text-white text-[11px] font-semibold py-2.5 px-4 transition-all shadow-sm"
                     >
-                      {job.type}
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-600">
-                      <GraduationCap className="h-3 w-3 text-slate-400" />
-                      {job.education}
-                    </span>
-                  </div>
-
-                  {/* Salary & Meta Info */}
-                  <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-[10px]">
-                    <div className="flex items-center gap-1.5 font-semibold text-slate-800">
-                      <Banknote className="h-3.5 w-3.5 text-teal-600 shrink-0" />
-                      <span>{job.salary || "Gaji Tidak Ditampilkan"}</span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-slate-400 pt-1">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3 shrink-0" />
-                        <span>{job.publishedAt}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-amber-700 font-medium">
-                        <CalendarX className="h-3 w-3 shrink-0 text-amber-600" />
-                        <span>Batas: {job.deadline}</span>
-                      </div>
-                    </div>
+                      <span>Lihat Detail</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
                   </div>
                 </div>
-
-                {/* Action CTA Button */}
-                <div className="mt-5 pt-3 border-t border-slate-100">
-                  <Link
-                    href={`/lowongan-kerja/${job.id}`}
-                    className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 hover:bg-teal-700 text-white text-[11px] font-semibold py-2.5 px-4 transition-all shadow-sm"
-                  >
-                    <span>Lihat Detail</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        ) : (
+          /* EMPTY STATE / UI HANDLER KETIKA DATA KOSONG */
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-12 sm:p-16 text-center space-y-4 shadow-sm">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
+              <Briefcase className="w-8 h-8 sm:w-10 sm:h-10" />
+            </div>
+            <div className="max-w-md mx-auto space-y-1">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                Belum Ada Lowongan Terbaru
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Saat ini belum ada lowongan pekerjaan terbaru yang
+                dipublikasikan. Silakan cek kembali secara berkala atau jelajahi
+                direktori perusahaan mitra kami.
+              </p>
+            </div>
+            <div className="pt-2">
+              <Link
+                href="/perusahaan"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-black text-white text-xs font-bold rounded-xl shadow-md transition-all"
+              >
+                <span>Jelajahi Perusahaan Mitra</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Mobile View: See All Button */}
-        <div className="mt-8 text-center sm:hidden">
-          <Link
-            href="/lowongan"
-            className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-white border border-slate-200 text-slate-800 text-xs font-semibold py-3 px-4 shadow-sm hover:bg-slate-50 transition-colors"
-          >
-            <span>Lihat Semua Lowongan</span>
-            <ArrowRight className="h-3.5 w-3.5 text-teal-600" />
-          </Link>
-        </div>
+        {mockJobs.length > 0 && (
+          <div className="mt-8 text-center sm:hidden">
+            <Link
+              href="/lowongan-kerja"
+              className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-white border border-slate-200 text-slate-800 text-xs font-semibold py-3 px-4 shadow-sm hover:bg-slate-50 transition-colors"
+            >
+              <span>Lihat Semua Lowongan</span>
+              <ArrowRight className="h-3.5 w-3.5 text-teal-600" />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

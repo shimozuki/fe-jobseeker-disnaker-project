@@ -11,6 +11,8 @@ import {
   ArrowRight,
   Sparkles,
   Building2,
+  RotateCcw,
+  Building,
 } from "lucide-react";
 
 interface Company {
@@ -25,6 +27,7 @@ interface Company {
 }
 
 const companyData: Company[] = [
+  /*
   {
     id: "c1",
     name: "PT Sumbawa Sejahtera Mining",
@@ -65,6 +68,7 @@ const companyData: Company[] = [
     activeJobs: 8,
     slug: "samawa-seaside-resort",
   },
+  */
 ];
 
 export default function FeaturedCompaniesSection() {
@@ -101,73 +105,101 @@ export default function FeaturedCompaniesSection() {
           </Link>
         </div>
 
-        {/* Vertical Modern Grid Card (4 Kolom) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {companyData.map((company) => (
-            <Link
-              key={company.id}
-              href={`/perusahaan/${company.slug}`}
-              className="group relative flex flex-col justify-between p-5 rounded-2xl bg-white border border-slate-200/80 hover:border-teal-400 shadow-sm hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1 transition-all duration-300"
-            >
-              <div>
-                {/* Header Card: Logo & Verified Badge */}
-                <div className="flex items-start justify-between gap-3 mb-4">
-                  <div className="relative h-14 w-14 rounded-2xl bg-slate-50 border border-slate-100 p-1.5 shrink-0 group-hover:border-teal-300 transition-colors">
-                    <div className="relative w-full h-full rounded-xl overflow-hidden bg-white shadow-inner">
-                      <Image
-                        src={company.logo}
-                        alt={company.name}
-                        fill
-                        sizes="56px"
-                        className="object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
+        {/* Vertical Modern Grid Card / UI Handler Data Kosong */}
+        {companyData.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {companyData.map((company) => (
+              <Link
+                key={company.id}
+                href={`/perusahaan/${company.slug}`}
+                className="group relative flex flex-col justify-between p-5 rounded-2xl bg-white border border-slate-200/80 hover:border-teal-400 shadow-sm hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1 transition-all duration-300"
+              >
+                <div>
+                  {/* Header Card: Logo & Verified Badge */}
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="relative h-14 w-14 rounded-2xl bg-slate-50 border border-slate-100 p-1.5 shrink-0 group-hover:border-teal-300 transition-colors">
+                      <div className="relative w-full h-full rounded-xl overflow-hidden bg-white shadow-inner">
+                        <Image
+                          src={company.logo}
+                          alt={company.name}
+                          fill
+                          sizes="56px"
+                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
                     </div>
+
+                    {company.verified ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200/80 px-2.5 py-1 rounded-full">
+                        <BadgeCheck className="h-3 w-3 text-teal-600" />
+                        Resmi
+                      </span>
+                    ) : (
+                      <div className="h-7 w-7 rounded-xl bg-slate-50 text-slate-400 group-hover:text-teal-600 group-hover:bg-teal-50 flex items-center justify-center transition-colors">
+                        <ArrowUpRight className="h-4 w-4" />
+                      </div>
+                    )}
                   </div>
 
-                  {company.verified ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200/80 px-2.5 py-1 rounded-full">
-                      <BadgeCheck className="h-3 w-3 text-teal-600" />
-                      Resmi
-                    </span>
-                  ) : (
-                    <div className="h-7 w-7 rounded-xl bg-slate-50 text-slate-400 group-hover:text-teal-600 group-hover:bg-teal-50 flex items-center justify-center transition-colors">
-                      <ArrowUpRight className="h-4 w-4" />
+                  {/* Company Name & Details */}
+                  <div className="space-y-1.5">
+                    <h3 className="text-base font-bold text-slate-900 group-hover:text-teal-600 transition-colors line-clamp-1">
+                      {company.name}
+                    </h3>
+
+                    <div className="space-y-1 text-xs text-slate-500">
+                      <p className="flex items-center gap-1.5 truncate">
+                        <Briefcase className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate">{company.industry}</span>
+                      </p>
+                      <p className="flex items-center gap-1.5 truncate">
+                        <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                        <span>{company.location}</span>
+                      </p>
                     </div>
-                  )}
-                </div>
-
-                {/* Company Name & Details */}
-                <div className="space-y-1.5">
-                  <h3 className="text-base font-bold text-slate-900 group-hover:text-teal-600 transition-colors line-clamp-1">
-                    {company.name}
-                  </h3>
-
-                  <div className="space-y-1 text-xs text-slate-500">
-                    <p className="flex items-center gap-1.5 truncate">
-                      <Briefcase className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">{company.industry}</span>
-                    </p>
-                    <p className="flex items-center gap-1.5 truncate">
-                      <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span>{company.location}</span>
-                    </p>
                   </div>
                 </div>
-              </div>
 
-              {/* Footer Card: Job Count & Action Icon */}
-              <div className="mt-6 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs">
-                <span className="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200/60">
-                  {company.activeJobs} Lowongan Aktif
-                </span>
+                {/* Footer Card: Job Count & Action Icon */}
+                <div className="mt-6 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <span className="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200/60">
+                    {company.activeJobs} Lowongan Aktif
+                  </span>
 
-                <div className="h-7 w-7 rounded-lg bg-slate-50 group-hover:bg-teal-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all duration-300 border border-slate-200/60 group-hover:border-teal-600">
-                  <ArrowUpRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  <div className="h-7 w-7 rounded-lg bg-slate-50 group-hover:bg-teal-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all duration-300 border border-slate-200/60 group-hover:border-teal-600">
+                    <ArrowUpRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          /* EMPTY STATE / UI HANDLER KETIKA DATA KOSONG */
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-12 sm:p-16 text-center space-y-4 shadow-sm">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
+              <Building className="w-8 h-8 sm:w-10 sm:h-10" />
+            </div>
+            <div className="max-w-md mx-auto space-y-1">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                Belum Ada Perusahaan Mitra Unggulan
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Saat ini belum ada data perusahaan atau instansi mitra unggulan
+                yang ditampilkan di halaman utama. Silakan kunjungi direktori
+                perusahaan untuk informasi lengkap.
+              </p>
+            </div>
+            <div className="pt-2">
+              <Link
+                href="/perusahaan-list"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-black text-white text-xs font-bold rounded-xl shadow-md transition-all"
+              >
+                <span>Lihat Direktori Perusahaan</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

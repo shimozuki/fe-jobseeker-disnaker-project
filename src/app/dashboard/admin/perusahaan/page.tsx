@@ -18,6 +18,7 @@ import {
   XCircle,
   Building,
   Eye,
+  RotateCcw,
 } from "lucide-react";
 
 // Interface Data Perusahaan
@@ -35,8 +36,9 @@ interface Company {
   logoUrl?: string;
 }
 
-// Mock Data Perusahaan
+// Mock Data Perusahaan (Dikomentari sesuai permintaan)
 const MOCK_COMPANIES: Company[] = [
+  /*
   {
     id: "COMP-001",
     name: "PT Samawa Digital",
@@ -97,6 +99,7 @@ const MOCK_COMPANIES: Company[] = [
     totalJobsCount: 1,
     joinedDate: "2026-08-14",
   },
+  */
 ];
 
 // Opsi Filter
@@ -125,6 +128,13 @@ export default function CompaniesPage() {
     useState<string>("Semua Industri");
   const [selectedLocation, setSelectedLocation] =
     useState<string>("Semua Lokasi");
+
+  const resetFilters = () => {
+    setSearchQuery("");
+    setSelectedStatus("Semua");
+    setSelectedIndustry("Semua Industri");
+    setSelectedLocation("Semua Lokasi");
+  };
 
   // Filtering Logic
   const filteredCompanies = useMemo(() => {
@@ -169,7 +179,7 @@ export default function CompaniesPage() {
 
         <div className="text-xs text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs self-start sm:self-auto">
           Total Perusahaan:{" "}
-          <strong className="text-slate-900">{MOCK_COMPANIES.length}</strong>
+          <strong className="text-slate-900">{filteredCompanies.length}</strong>
         </div>
       </div>
 
@@ -341,12 +351,38 @@ export default function CompaniesPage() {
                   </tr>
                 ))
               ) : (
+                /* EMPTY STATE / UI HANDLER KETIKA DATA KOSONG */
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-400">
-                    <Building2 className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-                    <p className="text-xs font-medium">
-                      Tidak ada perusahaan yang sesuai dengan filter.
-                    </p>
+                  <td colSpan={5} className="py-12 text-center">
+                    <div className="max-w-sm mx-auto space-y-3">
+                      <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
+                        <Building className="w-6 h-6" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-xs font-bold text-slate-800">
+                          {MOCK_COMPANIES.length === 0
+                            ? "Belum Ada Data Perusahaan"
+                            : "Perusahaan Tidak Ditemukan"}
+                        </h3>
+                        <p className="text-[0.7rem] text-slate-500 leading-relaxed">
+                          {MOCK_COMPANIES.length === 0
+                            ? "Saat ini belum ada data perusahaan atau instansi mitra yang terdaftar di dalam sistem."
+                            : "Tidak ada perusahaan atau instansi yang sesuai dengan kriteria filter atau pencarian Anda."}
+                        </p>
+                      </div>
+                      {(searchQuery ||
+                        selectedStatus !== "Semua" ||
+                        selectedIndustry !== "Semua Industri" ||
+                        selectedLocation !== "Semua Lokasi") && (
+                        <button
+                          onClick={resetFilters}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[0.7rem] font-bold rounded-lg transition-colors"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          <span>Reset Filter</span>
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               )}

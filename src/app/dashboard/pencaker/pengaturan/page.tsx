@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Settings,
@@ -21,6 +21,10 @@ import {
   ChevronDown,
   Globe,
 } from "lucide-react";
+import { useAuthUser } from "@/shared/contexts/SessionContext";
+import { logout } from "@/features/auth/services/auth.service";
+import { useToast } from "@/shared/contexts/ToastContext";
+import { useLocalStorage } from "@/shared/hooks/useLocalStorage";
 
 export default function PengaturanAkunPage() {
   // Mock State untuk contoh interaksi minimal
@@ -29,6 +33,24 @@ export default function PengaturanAkunPage() {
   const [isVerified] = useState(true);
   const [language, setLanguage] = useState("Bahasa Indonesia");
   const [profileVisibility, setProfileVisibility] = useState("Publik");
+  const { user } = useAuthUser();
+  const { addToast } = useToast();
+  const [token] = useLocalStorage("access-token", null);
+
+  const handleLogout = async () => {
+    if (!token) return;
+    const result = await logout(token);
+    if (result.status !== 200) {
+      addToast("Gagal logout", "error");
+      return;
+    }
+
+    window.location.href = "/login";
+  };
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <div className="mx-auto p-4 sm:p-6 lg:p-0 space-y-10 font-[Poppins] text-slate-800">
@@ -81,7 +103,9 @@ export default function PengaturanAkunPage() {
                 <p className="text-xs font-semibold text-slate-500">
                   Alamat Email
                 </p>
-                <p className="text-sm font-bold text-slate-900">{email}</p>
+                <p className="text-sm font-bold text-slate-900">
+                  {user?.email}
+                </p>
               </div>
             </div>
             <button className="text-xs font-bold text-app-navy-700 hover:text-app-navy-900 underline self-start sm:self-auto">
@@ -97,7 +121,9 @@ export default function PengaturanAkunPage() {
                 <p className="text-xs font-semibold text-slate-500">
                   Nomor Telepon
                 </p>
-                <p className="text-sm font-bold text-slate-900">{phone}</p>
+                <p className="text-sm font-bold text-slate-900">
+                  {user?.phone}
+                </p>
               </div>
             </div>
             <button className="text-xs font-bold text-app-navy-700 hover:text-app-navy-900 underline self-start sm:self-auto">
@@ -127,22 +153,22 @@ export default function PengaturanAkunPage() {
           <div className="flex items-center justify-between gap-3 pt-4">
             <div className="flex items-center gap-3.5">
               <BadgeCheck
-                className={`w-5 h-5 ${isVerified ? "text-emerald-500" : "text-amber-500"} shrink-0`}
+                className={`w-5 h-5 ${user?.email_verified_at ? "text-emerald-500" : "text-amber-500"} shrink-0`}
               />
               <div>
                 <p className="text-sm font-bold text-slate-900">
                   Verifikasi Akun
                 </p>
                 <p
-                  className={`text-xs font-medium ${isVerified ? "text-emerald-700" : "text-amber-700"}`}
+                  className={`text-xs font-medium ${user?.email_verified_at ? "text-emerald-700" : "text-amber-700"}`}
                 >
-                  {isVerified
+                  {user?.email_verified_at
                     ? "Akun Anda telah terverifikasi penuh."
                     : "Lengkapi verifikasi untuk akses penuh."}
                 </p>
               </div>
             </div>
-            {!isVerified && (
+            {!user?.email_verified_at && (
               <button className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-sm transition-all">
                 Lengkapi Verifikasi
               </button>
@@ -314,7 +340,10 @@ export default function PengaturanAkunPage() {
                 Ingin keluar dari sesi saat ini?
               </p>
             </div>
-            <button className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer">
+            <button
+              onClick={handleLogout}
+              className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer"
+            >
               Keluar / Logout
               <LogOut className="w-3.5 h-3.5" />
             </button>
