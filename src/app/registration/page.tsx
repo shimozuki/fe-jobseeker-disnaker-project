@@ -533,7 +533,7 @@ export default function RegisterPage() {
           </form>
 
           {/* DIVIDER */}
-          <div className="relative">
+          {/* <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-slate-200" />
             </div>
@@ -542,10 +542,10 @@ export default function RegisterPage() {
                 Atau Daftar Dengan
               </span>
             </div>
-          </div>
+          </div> */}
 
           {/* SOCIAL LOGIN */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
               className="w-full py-2 px-3 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-xl text-[11px] font-bold text-slate-700 transition-all inline-flex items-center justify-center gap-2 shadow-sm"
@@ -561,7 +561,7 @@ export default function RegisterPage() {
               <FaFacebook className="w-4 h-4 text-[#1877F2]" />
               <span>Facebook</span>
             </button>
-          </div>
+          </div> */}
 
           {/* LINK MENUJU HALAMAN LOGIN */}
           <div className="pt-2 text-center">
