@@ -5,6 +5,10 @@ const API_ENDPOINTS = {
   AUTH: {
     REGISTER: `${baseURL}/auth/register`,
     LOGIN: `${baseURL}/auth/login`,
+    VERIFY_EMAIL: `${baseURL}/auth/verify-email`,
+    RESEND_VERIFICATION: `${baseURL}/auth/resend-verification`,
+    FORGOT_PASSWORD: `${baseURL}/auth/forgot-password`,
+    RESET_PASSWORD: `${baseURL}/auth/reset-password`,
     ME: `${baseURL}/me`,
     LOGOUT: `${baseURL}/auth/logout`,
   },

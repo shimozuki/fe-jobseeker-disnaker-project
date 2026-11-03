@@ -39,6 +39,41 @@ export async function login(data: LoginDto) {
   }
 }
 
+export async function verifyEmail(token: string) {
+  try {
+    return await axios.get(API_ENDPOINTS.AUTH.VERIFY_EMAIL, { params: { token } });
+  } catch (error: any) {
+    return handleServiceError(error);
+  }
+}
+
+export async function resendVerification(email: string) {
+  try {
+    return await axios.post(API_ENDPOINTS.AUTH.RESEND_VERIFICATION, { email });
+  } catch (error: any) {
+    return handleServiceError(error);
+  }
+}
+
+export async function forgotPassword(email: string) {
+  try {
+    return await axios.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email });
+  } catch (error: any) {
+    return handleServiceError(error);
+  }
+}
+
+export async function resetPassword(data: {
+  token: string;
+  new_password: string;
+}) {
+  try {
+    return await axios.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, data);
+  } catch (error: any) {
+    return handleServiceError(error);
+  }
+}
+
 export async function me(token: string) {
   try {
     const response = await axios.get(API_ENDPOINTS.AUTH.ME, {
