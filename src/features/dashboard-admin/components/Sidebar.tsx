@@ -172,9 +172,26 @@ export default function SidebarAdmin() {
           const hasSubmenu = Boolean(item.submenu && item.submenu.length > 0);
           const isSubmenuOpen = openSubmenu === item.title;
 
-          const isParentActive = item.href
+          // Pengecualian khusus untuk menu Dashboard: hanya aktif jika pathname sama persis dengan href-nya
+          const isDashboard = item.href === "/dashboard/admin";
+
+          const isParentActive = isDashboard
             ? pathname === item.href
-            : item.submenu?.some((sub) => pathname === sub.href);
+            : item.href
+              ? pathname === item.href ||
+                (item.href !== "/" && pathname.startsWith(item.href))
+              : item.submenu?.some(
+                  (sub) =>
+                    pathname === sub.href ||
+                    (sub.href !== "/" && pathname.startsWith(sub.href)),
+                );
+
+          const isLinkActive = isDashboard
+            ? pathname === item.href
+            : pathname === item.href ||
+              (item.href &&
+                item.href !== "/" &&
+                pathname.startsWith(item.href));
 
           return (
             <div key={item.title} className="space-y-0.5">
@@ -215,7 +232,7 @@ export default function SidebarAdmin() {
                 <Link
                   href={item.href || "#"}
                   className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 group ${
-                    pathname === item.href
+                    isLinkActive
                       ? "bg-teal-600 text-white font-semibold shadow-sm shadow-teal-600/20"
                       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   }`}
@@ -223,7 +240,7 @@ export default function SidebarAdmin() {
                   <div className="flex items-center gap-2.5">
                     <Icon
                       className={`w-4 h-4 transition-colors ${
-                        pathname === item.href
+                        isLinkActive
                           ? "text-white"
                           : "text-slate-400 group-hover:text-slate-700"
                       }`}
@@ -234,7 +251,7 @@ export default function SidebarAdmin() {
                   {item.badge && (
                     <span
                       className={`px-2 py-0.5 text-[0.6rem] font-bold rounded-full ${
-                        pathname === item.href
+                        isLinkActive
                           ? "bg-white/20 text-white"
                           : "bg-teal-100 text-teal-700"
                       }`}
@@ -257,7 +274,9 @@ export default function SidebarAdmin() {
                     >
                       {item.submenu?.map((sub) => {
                         const SubIcon = sub.icon;
-                        const isSubActive = pathname === sub.href;
+                        const isSubActive =
+                          pathname === sub.href ||
+                          (sub.href !== "/" && pathname.startsWith(sub.href));
 
                         return (
                           <Link

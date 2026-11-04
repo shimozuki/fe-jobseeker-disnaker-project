@@ -308,7 +308,7 @@ export default function LoginPage() {
           </form>
 
           {/* Divider */}
-          {/* <div className="relative">
+          <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-slate-200" />
             </div>
@@ -317,10 +317,10 @@ export default function LoginPage() {
                 Atau Masuk Menggunakan
               </span>
             </div>
-          </div> */}
+          </div>
 
           {/* Social OAuth Login */}
-          {/* <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
               onClick={() => {
@@ -342,7 +342,7 @@ export default function LoginPage() {
               <FaFacebook className="w-4 h-4 text-[#1877F2]" />
               <span>Facebook</span>
             </button>
-          </div> */}
+          </div>
 
           {/* Link Register */}
           <div className="pt-2 text-center">

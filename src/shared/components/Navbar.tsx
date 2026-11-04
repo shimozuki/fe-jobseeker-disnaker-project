@@ -410,21 +410,21 @@ export default function Navbar() {
                           Saya
                         </Link>
                         <Link
-                          href="/lamaran-saya"
+                          href="/dashboard/pencaker/lamaran"
                           className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-app-navy-50/50 transition-colors"
                         >
                           <FileText className="w-4 h-4 text-app-navy-600" />{" "}
                           Lamaran Saya
                         </Link>
                         <Link
-                          href="/tersimpan"
+                          href="/dashboard/pencaker/tersimpan"
                           className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-app-navy-50/50 transition-colors"
                         >
                           <Bookmark className="w-4 h-4 text-app-navy-600" />{" "}
                           Saved Jobs
                         </Link>
                         <Link
-                          href="/pengaturan"
+                          href="/dashboard/pencaker/pengaturan"
                           className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-app-navy-50/50 transition-colors"
                         >
                           <Settings className="w-4 h-4 text-app-navy-600" />{" "}
