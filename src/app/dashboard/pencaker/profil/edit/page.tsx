@@ -37,6 +37,7 @@ import { useJobSeekerSkill } from "@/features/profil-pencaker/hooks/useUserSkill
 import { useJobSeekerCertification } from "@/features/profil-pencaker/hooks/useUserCertification.hook";
 import { formatDateWithMonthName } from "@/shared/utils/formatDate.util";
 import { useOptions } from "@/shared/hooks/useOptions.hook";
+import { MajorOptionItem } from "@/shared/types/option.type";
 
 export default function CandidateEditProfilePage() {
   const [activeTab, setActiveTab] = useState<
@@ -1036,7 +1037,7 @@ export default function CandidateEditProfilePage() {
                           )}
                         </div>
                         {filteredModalMajors.length > 0 ? (
-                          filteredModalMajors.map((major) => {
+                          filteredModalMajors.map((major: MajorOptionItem) => {
                             const isSelected =
                               createJobSeekerEducationForm.major ===
                               major.nama_jurusan;
@@ -1048,6 +1049,7 @@ export default function CandidateEditProfilePage() {
                                     (prev: any) => ({
                                       ...prev,
                                       major: major.nama_jurusan,
+                                      major_id: major.id,
                                     }),
                                   );
                                   setIsModalMajorOpen(false);
