@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -21,6 +21,9 @@ import {
   Building2,
   MapPin,
   Download,
+  Search,
+  ChevronDown,
+  Check,
 } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa6";
 import { useJobSeekerProfile } from "@/features/profil-pencaker/hooks/useUserProfile.hook";
@@ -33,6 +36,7 @@ import { employmentTypeMap } from "@/shared/utils/emplymentTypeMap";
 import { useJobSeekerSkill } from "@/features/profil-pencaker/hooks/useUserSkill.hook";
 import { useJobSeekerCertification } from "@/features/profil-pencaker/hooks/useUserCertification.hook";
 import { formatDateWithMonthName } from "@/shared/utils/formatDate.util";
+import { useOptions } from "@/shared/hooks/useOptions.hook";
 
 export default function CandidateEditProfilePage() {
   const [activeTab, setActiveTab] = useState<
@@ -94,8 +98,31 @@ export default function CandidateEditProfilePage() {
     resetCreateJobSeekerCertificationForm,
   } = useJobSeekerCertification();
 
+  const { majorOptions, handleSetMajorOptionFilter } = useOptions();
+
+  // State & Ref Searchable Select untuk Jurusan di Modal Pendidikan
+  const [modalMajorQuery, setModalMajorQuery] = useState("");
+  const [isModalMajorOpen, setIsModalMajorOpen] = useState(false);
+  const modalMajorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalMajorRef.current &&
+        !modalMajorRef.current.contains(event.target as Node)
+      ) {
+        setIsModalMajorOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredModalMajors = majorOptions.filter((m) =>
+    m.nama_jurusan.toLowerCase().includes(modalMajorQuery.toLowerCase()),
+  );
+
   const { user } = useAuthUser();
-  // const [hasNoExperience, setHasNoExperience] = useState(false);
 
   // --- MODAL STATES ---
   const [isEducationModalOpen, setIsEducationModalOpen] = useState(false);
@@ -256,7 +283,6 @@ export default function CandidateEditProfilePage() {
                   name="full_name"
                   disabled
                   value={updateJobSeekerProfileForm.full_name ?? ""}
-                  // onChange={(e) => handleChangeUpdateJobSeekerProfileForm(e)}
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-app-navy-600"
                   required
                 />
@@ -284,7 +310,6 @@ export default function CandidateEditProfilePage() {
                   name="email"
                   disabled
                   value={user?.email}
-                  // onChange={(e) => handleChangeUpdateJobSeekerProfileForm(e)}
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-app-navy-600"
                   required
                 />
@@ -380,7 +405,6 @@ export default function CandidateEditProfilePage() {
                   <option value="S-1">S-1</option>
                   <option value="S-2">S-2</option>
                   <option value="S-3">S-3</option>
-                  {/* Tambahkan option lainnya sesuai kebutuhan */}
                 </select>
               </div>
             </div>
@@ -442,7 +466,6 @@ export default function CandidateEditProfilePage() {
                   >
                     <option value="">Pilih Kabupaten / Kota</option>
                     <option value="Kabupaten Sumbawa">Kabupaten Sumbawa</option>
-                    {/* Tambahkan option lainnya sesuai kebutuhan */}
                   </select>
                 </div>
 
@@ -461,7 +484,6 @@ export default function CandidateEditProfilePage() {
                     <option value="Nusa Tenggara Barat">
                       Nusa Tenggara Barat
                     </option>
-                    {/* Tambahkan option lainnya sesuai kebutuhan */}
                   </select>
                 </div>
                 <div>
@@ -600,12 +622,6 @@ export default function CandidateEditProfilePage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2 self-end sm:self-center">
-                    {/* <button
-                      onClick={() => setIsEducationModalOpen(true)}
-                      className="p-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-100"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                    </button> */}
                     <button
                       onClick={() =>
                         handleDeleteJobSeekerEducation(edu.id.toString())
@@ -622,12 +638,6 @@ export default function CandidateEditProfilePage() {
                 <p className="text-xs font-medium text-slate-500 mb-2">
                   Belum ada riwayat pendidikan yang ditambahkan.
                 </p>
-                {/* <button
-                  onClick={() => setIsEducationModalOpen(true)}
-                  className="text-xs font-semibold text-app-navy-800 hover:underline"
-                >
-                  + Tambah Pendidikan
-                </button> */}
               </div>
             )}
           </div>
@@ -696,15 +706,12 @@ export default function CandidateEditProfilePage() {
                         </h4>
                       </div>
 
-                      {/* Nama Perusahaan & Lokasi dengan Logo/Ikon */}
                       <div className="flex items-center gap-3 mt-1 flex-wrap text-xs text-slate-600">
-                        {/* Nama Perusahaan */}
                         <div className="flex items-center gap-1.5 font-semibold text-slate-700">
                           <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                           <span>{exp.company_name}</span>
                         </div>
 
-                        {/* Lokasi */}
                         {exp.location && (
                           <>
                             <span className="text-slate-300">•</span>
@@ -722,12 +729,6 @@ export default function CandidateEditProfilePage() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      {/* <button
-              onClick={() => setIsExperienceModalOpen(true)}
-              className="p-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-100"
-            >
-              <Edit3 className="w-3.5 h-3.5" />
-            </button> */}
                       <button
                         onClick={() =>
                           handleDeleteJobSeekerExperience(exp.id.toString())
@@ -762,7 +763,6 @@ export default function CandidateEditProfilePage() {
                 </div>
               ))
             ) : (
-              /* Tampilan jika data kosong */
               <div className="text-center py-8 px-4 rounded-xl border border-dashed border-slate-300 bg-slate-50">
                 <p className="text-xs font-medium text-slate-500 mb-2">
                   Belum ada riwayat pengalaman kerja yang ditambahkan.
@@ -828,7 +828,6 @@ export default function CandidateEditProfilePage() {
                 ))}
               </div>
             ) : (
-              /* Empty State Keahlian */
               <div className="text-center py-8 px-4 rounded-xl border border-dashed border-slate-300 bg-slate-50">
                 <p className="text-xs font-medium text-slate-500 mb-2">
                   Belum ada keahlian yang ditambahkan.
@@ -876,7 +875,6 @@ export default function CandidateEditProfilePage() {
                       </div>
                     </div>
 
-                    {/* Tombol Aksi (Download & Hapus) */}
                     <div className="flex items-center gap-2 shrink-0">
                       {cert.certificate_file_url && (
                         <a
@@ -906,7 +904,6 @@ export default function CandidateEditProfilePage() {
                 ))}
               </div>
             ) : (
-              /* Empty State Sertifikasi */
               <div className="text-center py-8 px-4 rounded-xl border border-dashed border-slate-300 bg-slate-50">
                 <p className="text-xs font-medium text-slate-500 mb-2">
                   Belum ada sertifikasi yang ditambahkan.
@@ -955,7 +952,10 @@ export default function CandidateEditProfilePage() {
                   <select
                     name="degree"
                     value={createJobSeekerEducationForm.degree}
-                    onChange={handleChangeCreateJobSeekerEducationForm}
+                    onChange={(e) => {
+                      handleChangeCreateJobSeekerEducationForm(e);
+                      handleSetMajorOptionFilter(e.target.value);
+                    }}
                     className="w-full p-2.5 rounded-xl border border-slate-200"
                   >
                     <option value={""}>Pilih Jenjang</option>
@@ -979,19 +979,105 @@ export default function CandidateEditProfilePage() {
                     placeholder="Contoh: Universitas Mataram"
                   />
                 </div>
-                <div>
+
+                {/* Jurusan / Program Studi dengan majorOptions Searchable Select */}
+                <div className="relative" ref={modalMajorRef}>
                   <label className="block font-bold text-slate-700 mb-1">
                     Jurusan / Program Studi
                   </label>
-                  <input
-                    type="text"
-                    name="major"
-                    value={createJobSeekerEducationForm.major}
-                    onChange={handleChangeCreateJobSeekerEducationForm}
-                    className="w-full p-2.5 rounded-xl border border-slate-200"
-                    placeholder="Contoh: Teknik Geologi"
-                  />
+                  <div
+                    onClick={() => setIsModalMajorOpen(!isModalMajorOpen)}
+                    className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between cursor-pointer min-h-[38px]"
+                  >
+                    <span
+                      className={
+                        createJobSeekerEducationForm.major
+                          ? "text-slate-800 font-bold"
+                          : "text-slate-400 font-medium"
+                      }
+                    >
+                      {createJobSeekerEducationForm.major ||
+                        "Pilih atau cari jurusan..."}
+                    </span>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  </div>
+
+                  {isModalMajorOpen && (
+                    <div className="absolute z-30 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg p-2 space-y-2">
+                      <div className="relative">
+                        <Search className="w-3 h-3 absolute left-2.5 top-2.5 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="Cari jurusan..."
+                          value={modalMajorQuery}
+                          onChange={(e) => setModalMajorQuery(e.target.value)}
+                          className="w-full pl-7 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-app-navy-600"
+                          autoFocus
+                        />
+                      </div>
+                      <div className="max-h-40 overflow-y-auto space-y-0.5">
+                        <div
+                          onClick={() => {
+                            setCreateJobSeekerEducationForm((prev: any) => ({
+                              ...prev,
+                              major: "",
+                            }));
+                            setIsModalMajorOpen(false);
+                          }}
+                          className={`px-3 py-1.5 text-xs rounded-lg cursor-pointer flex items-center justify-between transition-colors ${
+                            createJobSeekerEducationForm.major === ""
+                              ? "bg-app-navy-50 text-app-navy-800 font-bold"
+                              : "hover:bg-slate-50 text-slate-700"
+                          }`}
+                        >
+                          <span>Pilih Jurusan</span>
+                          {createJobSeekerEducationForm.major === "" && (
+                            <Check className="w-3.5 h-3.5 text-app-navy-700" />
+                          )}
+                        </div>
+                        {filteredModalMajors.length > 0 ? (
+                          filteredModalMajors.map((major) => {
+                            const isSelected =
+                              createJobSeekerEducationForm.major ===
+                              major.nama_jurusan;
+                            return (
+                              <div
+                                key={major.id}
+                                onClick={() => {
+                                  setCreateJobSeekerEducationForm(
+                                    (prev: any) => ({
+                                      ...prev,
+                                      major: major.nama_jurusan,
+                                    }),
+                                  );
+                                  setIsModalMajorOpen(false);
+                                }}
+                                className={`px-3 py-1.5 text-xs rounded-lg cursor-pointer flex items-center justify-between transition-colors ${
+                                  isSelected
+                                    ? "bg-app-navy-50 text-app-navy-800 font-bold"
+                                    : "hover:bg-slate-50 text-slate-700"
+                                }`}
+                              >
+                                <span>
+                                  {major.nama_jurusan}
+                                  {major.jenjang ? ` (${major.jenjang})` : ""}
+                                </span>
+                                {isSelected && (
+                                  <Check className="w-3.5 h-3.5 text-app-navy-700" />
+                                )}
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <div className="py-2 text-center text-slate-400 text-[11px]">
+                            Tidak ditemukan
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
+
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="block font-bold text-slate-700 mb-1">
@@ -1092,7 +1178,6 @@ export default function CandidateEditProfilePage() {
                 </button>
               </div>
 
-              {/* Bagian Form yang Scrollable */}
               <div className="max-h-[70vh] overflow-y-auto space-y-3 text-xs pr-1">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
@@ -1130,7 +1215,6 @@ export default function CandidateEditProfilePage() {
                   />
                 </div>
 
-                {/* Input Lokasi */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
                     Lokasi
@@ -1160,7 +1244,6 @@ export default function CandidateEditProfilePage() {
                 </div>
 
                 <div className="space-y-3">
-                  {/* Grid Tahun Masuk & Tahun Keluar */}
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block font-bold text-slate-700 mb-1">
@@ -1203,7 +1286,6 @@ export default function CandidateEditProfilePage() {
                     </div>
                   </div>
 
-                  {/* Checkbox "Masih bekerja di sini" */}
                   <div className="flex items-center gap-2 pt-1">
                     <input
                       type="checkbox"

@@ -162,6 +162,7 @@ export interface AdminExportJobSeekerResult {
 
 export interface AdminExportJobSeekerFilter {
   education_level: string;
+  major_id: number;
   gender: string;
   job_field_id: number | null;
   job_type: string;

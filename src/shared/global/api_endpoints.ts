@@ -18,6 +18,7 @@ const API_ENDPOINTS = {
     INDUSTRY: `${baseURL}/option/industries`,
     JOB_CATEGORY: `${baseURL}/option/job-fields`,
     JOB_POSITION: `${baseURL}/option/positions`,
+    MAJOR: `${baseURL}/option/majors`,
   },
   JOB_SEEKER: {
     PROFILE: {

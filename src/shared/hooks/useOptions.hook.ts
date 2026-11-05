@@ -5,9 +5,14 @@ import {
   getIndustryOptions,
   getJobCategoryOptions,
   getJobPositionOptions,
+  getMajorOptions,
 } from "../services/options.service";
 import { Districts } from "../types/districtsList.type";
-import { OptionItem } from "../types/option.type";
+import {
+  MajorOptionFilter,
+  MajorOptionItem,
+  OptionItem,
+} from "../types/option.type";
 export function useOptions() {
   const [districtOptions, setDistrictOptions] = useState<Districts[] | []>([]);
   const [categoryDocumentOptions, setCategoryDocumentOptions] = useState<
@@ -22,6 +27,12 @@ export function useOptions() {
   const [jobPositionOptions, setJobPositionOptions] = useState<
     OptionItem[] | []
   >([]);
+
+  const [majorOptions, setMajorOptions] = useState<MajorOptionItem[] | []>([]);
+
+  const [majorOptionFilter, setMajorOptionFilter] = useState<MajorOptionFilter>(
+    { jenjang: "" },
+  );
 
   useEffect(() => {
     const fetch = async () => {
@@ -78,11 +89,28 @@ export function useOptions() {
     fetch();
   }, []);
 
+  useEffect(() => {
+    const fetch = async () => {
+      const result = await getMajorOptions(majorOptionFilter);
+      if (result.status !== 200) {
+        return;
+      }
+      setMajorOptions(result.data.data);
+    };
+    fetch();
+  }, [majorOptionFilter]);
+
+  const handleSetMajorOptionFilter = (filter: string) => {
+    setMajorOptionFilter({ jenjang: filter });
+  };
+
   return {
     districtOptions,
     insdustryOptions,
     jobCategoryOptions,
     jobPositionOptions,
     categoryDocumentOptions,
+    majorOptions,
+    handleSetMajorOptionFilter,
   };
 }

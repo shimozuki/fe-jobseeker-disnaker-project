@@ -32,12 +32,14 @@ export default function ExportPelamarPage() {
     handleExportExcel,
   } = useAdminJobSeeker();
 
-  // Hook Master Options untuk Pilihan Dinamis (District, Industry, Job Field, Job Position)
+  // Hook Master Options untuk Pilihan Dinamis (District, Industry, Job Field, Job Position, Major)
   const {
     districtOptions,
     insdustryOptions,
     jobCategoryOptions,
     jobPositionOptions,
+    majorOptions,
+    handleSetMajorOptionFilter,
   } = useOptions();
 
   // State Search Query untuk Dropdown Searchable Select
@@ -56,12 +58,16 @@ export default function ExportPelamarPage() {
   const [districtQuery, setDistrictQuery] = useState("");
   const [isDistrictOpen, setIsDistrictOpen] = useState(false);
 
+  const [majorQuery, setMajorQuery] = useState("");
+  const [isMajorOpen, setIsMajorOpen] = useState(false);
+
   // Refs untuk Click Outside Dropdown
   const posRef = useRef<HTMLDivElement>(null);
   const workPlaceRef = useRef<HTMLDivElement>(null);
   const districtRef = useRef<HTMLDivElement>(null);
   const jobFieldRef = useRef<HTMLDivElement>(null);
   const industryRef = useRef<HTMLDivElement>(null);
+  const majorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -92,6 +98,12 @@ export default function ExportPelamarPage() {
       ) {
         setIsIndustryOpen(false);
       }
+      if (
+        majorRef.current &&
+        !majorRef.current.contains(event.target as Node)
+      ) {
+        setIsMajorOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -112,6 +124,9 @@ export default function ExportPelamarPage() {
   );
   const filteredIndustries = insdustryOptions.filter((i) =>
     i.name.toLowerCase().includes(industryQuery.toLowerCase()),
+  );
+  const filteredMajors = majorOptions.filter((m) =>
+    m.nama_jurusan.toLowerCase().includes(majorQuery.toLowerCase()),
   );
 
   // Handler Perubahan Field Filter secara Generik
@@ -175,9 +190,10 @@ export default function ExportPelamarPage() {
               </label>
               <select
                 value={adminExportJobSeekerFilter.education_level}
-                onChange={(e) =>
-                  handleFilterChange("education_level", e.target.value)
-                }
+                onChange={(e) => {
+                  handleFilterChange("education_level", e.target.value);
+                  handleSetMajorOptionFilter(e.target.value);
+                }}
                 className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-teal-500 text-slate-700"
               >
                 <option value="">Semua Pendidikan</option>
@@ -188,7 +204,97 @@ export default function ExportPelamarPage() {
               </select>
             </div>
 
-            {/* 2. Tempat Tinggal (Domisili / District Code Select) */}
+            {/* 2. Jurusan (Major ID / Searchable Select) */}
+            <div className="relative" ref={majorRef}>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Jurusan / Program Studi
+              </label>
+              <div
+                onClick={() => setIsMajorOpen(!isMajorOpen)}
+                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between cursor-pointer min-h-[38px]"
+              >
+                <span
+                  className={
+                    adminExportJobSeekerFilter.major_id
+                      ? "text-slate-800 font-bold"
+                      : "text-slate-400 font-medium"
+                  }
+                >
+                  {majorOptions.find(
+                    (m) => m.id === adminExportJobSeekerFilter.major_id,
+                  )?.nama_jurusan || "Semua Jurusan"}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              </div>
+
+              {isMajorOpen && (
+                <div className="absolute z-20 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg p-2 space-y-2">
+                  <div className="relative">
+                    <Search className="w-3 h-3 absolute left-2.5 top-2.5 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Cari jurusan..."
+                      value={majorQuery}
+                      onChange={(e) => setMajorQuery(e.target.value)}
+                      className="w-full pl-7 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500"
+                      autoFocus
+                    />
+                  </div>
+                  <div className="max-h-40 overflow-y-auto space-y-0.5">
+                    <div
+                      onClick={() => {
+                        handleFilterChange("major_id", null);
+                        setIsMajorOpen(false);
+                      }}
+                      className={`px-3 py-1.5 text-xs rounded-lg cursor-pointer flex items-center justify-between transition-colors ${
+                        adminExportJobSeekerFilter.major_id === null
+                          ? "bg-teal-50 text-teal-700 font-bold"
+                          : "hover:bg-slate-50 text-slate-700"
+                      }`}
+                    >
+                      <span>Semua Jurusan</span>
+                      {adminExportJobSeekerFilter.major_id === null && (
+                        <Check className="w-3.5 h-3.5 text-teal-600" />
+                      )}
+                    </div>
+                    {filteredMajors.length > 0 ? (
+                      filteredMajors.map((major) => {
+                        const isSelected =
+                          adminExportJobSeekerFilter.major_id === major.id;
+                        return (
+                          <div
+                            key={major.id}
+                            onClick={() => {
+                              handleFilterChange("major_id", major.id);
+                              setIsMajorOpen(false);
+                            }}
+                            className={`px-3 py-1.5 text-xs rounded-lg cursor-pointer flex items-center justify-between transition-colors ${
+                              isSelected
+                                ? "bg-teal-50 text-teal-700 font-bold"
+                                : "hover:bg-slate-50 text-slate-700"
+                            }`}
+                          >
+                            <span>
+                              {major.nama_jurusan}
+                              {major.jenjang ? ` (${major.jenjang})` : ""}
+                            </span>
+                            {isSelected && (
+                              <Check className="w-3.5 h-3.5 text-teal-600" />
+                            )}
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="py-2 text-center text-slate-400 text-[11px]">
+                        Tidak ditemukan
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 3. Tempat Tinggal (Domisili / District Code Select) */}
             <div className="relative" ref={districtRef}>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Tempat Tinggal (Kecamatan)
@@ -283,7 +389,7 @@ export default function ExportPelamarPage() {
               )}
             </div>
 
-            {/* 3. Preferensi Tempat Kerja (Preferred District Code Select) */}
+            {/* 4. Preferensi Tempat Kerja (Preferred District Code Select) */}
             <div className="relative" ref={workPlaceRef}>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Preferensi Tempat Kerja
@@ -384,7 +490,7 @@ export default function ExportPelamarPage() {
               )}
             </div>
 
-            {/* 4. Gender */}
+            {/* 5. Gender */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Jenis Kelamin
@@ -400,7 +506,7 @@ export default function ExportPelamarPage() {
               </select>
             </div>
 
-            {/* 5. Umur (Min - Max Age) */}
+            {/* 6. Umur (Min - Max Age) */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Rentang Umur (Tahun)
@@ -433,7 +539,7 @@ export default function ExportPelamarPage() {
               </div>
             </div>
 
-            {/* 6. Rentang Ekspektasi Gaji */}
+            {/* 7. Rentang Ekspektasi Gaji */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Rentang Ekspektasi Gaji (IDR)
@@ -466,7 +572,7 @@ export default function ExportPelamarPage() {
               </div>
             </div>
 
-            {/* 7. Job Field ID (Searchable Select Option) */}
+            {/* 8. Job Field ID (Searchable Select Option) */}
             <div className="relative" ref={jobFieldRef}>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Bidang Pekerjaan
@@ -553,7 +659,7 @@ export default function ExportPelamarPage() {
               )}
             </div>
 
-            {/* 8. Industry ID (Searchable Select Option) */}
+            {/* 9. Industry ID (Searchable Select Option) */}
             <div className="relative" ref={industryRef}>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Industri Pilihan
@@ -640,7 +746,7 @@ export default function ExportPelamarPage() {
               )}
             </div>
 
-            {/* 9. Position ID (Searchable Select Option) */}
+            {/* 10. Position ID (Searchable Select Option) */}
             <div className="relative" ref={posRef}>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Posisi yang Diinginkan
@@ -727,7 +833,7 @@ export default function ExportPelamarPage() {
               )}
             </div>
 
-            {/* 10. Job Type */}
+            {/* 11. Job Type */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Jenis Pekerjaan
@@ -746,7 +852,7 @@ export default function ExportPelamarPage() {
               </select>
             </div>
 
-            {/* 11. Work Arrangement */}
+            {/* 12. Work Arrangement */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Sistem Kerja
@@ -765,7 +871,7 @@ export default function ExportPelamarPage() {
               </select>
             </div>
 
-            {/* 12. Willing to Relocate */}
+            {/* 13. Willing to Relocate */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Kesediaan Relokasi
@@ -790,7 +896,7 @@ export default function ExportPelamarPage() {
               </select>
             </div>
 
-            {/* 13. Job Search Status */}
+            {/* 14. Job Search Status */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Status Pencarian Kerja
