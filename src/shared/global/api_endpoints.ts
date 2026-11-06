@@ -11,6 +11,7 @@ const API_ENDPOINTS = {
     RESET_PASSWORD: `${baseURL}/auth/reset-password`,
     ME: `${baseURL}/me`,
     LOGOUT: `${baseURL}/auth/logout`,
+    RESEND_VERIFICATION: `${baseURL}/auth/resend-verification`,
   },
   OPTIONS: {
     DISTRICTS: `${baseURL}/option/districts`,

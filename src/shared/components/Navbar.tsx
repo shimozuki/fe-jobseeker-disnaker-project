@@ -150,7 +150,13 @@ export default function Navbar() {
 
   const hideNavbar =
     pathname.startsWith("/dashboard") ||
+<<<<<<< HEAD
     ["login", "registration", "403", "verify-email", "reset-password", "lupa-password"].some((route) => pathname.includes(route));
+=======
+    ["login", "registration", "403", "verify"].some((route) =>
+      pathname.includes(route),
+    );
+>>>>>>> upstream/main
 
   if (hideNavbar) return null;
 

@@ -105,3 +105,18 @@ export async function logout(token: string) {
     return handleServiceError(error);
   }
 }
+
+export async function resendVerification(email: string) {
+  try {
+    const formData = new FormData();
+    formData.append("email", email);
+    const response = await axios.post(
+      API_ENDPOINTS.AUTH.RESEND_VERIFICATION,
+      formData,
+    );
+    return response;
+  } catch (error: any) {
+    console.log(error);
+    return handleServiceError(error);
+  }
+}

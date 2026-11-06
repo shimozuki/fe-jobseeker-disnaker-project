@@ -20,7 +20,13 @@ export default function Footer() {
 
   const hideFootbar =
     pathname.startsWith("/dashboard") ||
+<<<<<<< HEAD
     ["login", "registration", "403", "verify-email", "reset-password", "lupa-password"].some((route) => pathname.includes(route));
+=======
+    ["login", "registration", "403", "verify"].some((route) =>
+      pathname.includes(route),
+    );
+>>>>>>> upstream/main
 
   if (hideFootbar) return null;
 
